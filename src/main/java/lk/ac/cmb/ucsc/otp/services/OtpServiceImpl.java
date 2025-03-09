@@ -13,14 +13,14 @@ public enum OtpServiceImpl implements OtpService {
     INSTANCE;
 
     private final static int DIGITS = 4;
-    private final static int EXPIRY_TIME_IN_MINUTES = 5;
+    private final static int EXPIRY_TIME_IN_SECONDS = 30;
     private final static Logger logger = FileLogger.getLogger();
 
     private final OtpStore otpStore;
 
     OtpServiceImpl() {
         this.otpStore = OtpStoreImpl.INSTANCE;
-        this.otpStore.setExpiryTime(EXPIRY_TIME_IN_MINUTES, TimeUnit.MINUTES);
+        this.otpStore.setExpiryTime(EXPIRY_TIME_IN_SECONDS, TimeUnit.SECONDS);
     }
 
     public void generateOtp(CASAAccount account, NotificationService notificationService) {

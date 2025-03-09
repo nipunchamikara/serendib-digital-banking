@@ -13,19 +13,14 @@ import lk.ac.cmb.ucsc.notification.services.NotificationService;
 import lk.ac.cmb.ucsc.otp.services.OtpService;
 import lk.ac.cmb.ucsc.otp.services.OtpServiceImpl;
 
-import java.util.concurrent.TimeUnit;
-
 public enum CustomerServiceImpl implements CustomerService {
     INSTANCE;
-
-    private final static int PROFILE_LOCK_TIME_IN_MINUTES = 5;
 
     private final CASAAccountStore accountStore = CASAAccountStoreImpl.INSTANCE;
     private final ProfileStore profileStore = ProfileStoreImpl.INSTANCE;
     private final OtpService otpService = OtpServiceImpl.INSTANCE;
 
     CustomerServiceImpl() {
-        Profile.setLockPeriod(PROFILE_LOCK_TIME_IN_MINUTES, TimeUnit.MINUTES);
     }
 
     @Override
