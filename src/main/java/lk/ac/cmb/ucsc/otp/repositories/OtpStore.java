@@ -11,5 +11,5 @@ public interface OtpStore {
 
     void saveOtp(String accountNumber, int otp);
 
-    void setExpiryTime(long expiryTimeInMinutes, TimeUnit timeUnit);
+    void setExpiryTime(long expiryTime, TimeUnit timeUnit);
 }
