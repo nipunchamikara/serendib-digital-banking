@@ -56,8 +56,16 @@ public class LoginService {
 
         customerService.sendOtp(profile.getAccount(), notificationService);
 
-        if (customerService.isOtpInvalid(profile.getAccount(), new IntegerInput("Enter OTP").promptUser(scanner))) {
-            System.out.println("Invalid OTP");
+        while (!profile.isLocked()) {
+            if (customerService.isOtpInvalid(profile.getAccount(), new IntegerInput("Enter OTP").promptUser(scanner))) {
+                System.out.println("Invalid OTP");
+            } else {
+                break;
+            }
+        }
+
+        if (profile.isLocked()) {
+            System.out.println("Profile locked. Please contact the bank");
             return;
         }
 

@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 
 public class OnboardingService {
     private final static Logger logger = FileLogger.getLogger();
+    private final static int MAX_INCORRECT_ATTEMPTS = Profile.MAX_INCORRECT_ATTEMPTS;
     private final CustomerService customerService;
 
     public OnboardingService() {
@@ -59,8 +60,19 @@ public class OnboardingService {
         }
 
         customerService.sendOtp(account, notificationDecorator);
-        if (customerService.isOtpInvalid(account, new IntegerInput("Enter OTP").promptUser(scanner))) {
-            System.out.println("Invalid OTP");
+
+        int attempts = 0;
+        while (attempts < MAX_INCORRECT_ATTEMPTS) {
+            if (customerService.isOtpInvalid(account, new IntegerInput("Enter OTP").promptUser(scanner))) {
+                System.out.println("Invalid OTP");
+                attempts++;
+            } else {
+                break;
+            }
+        }
+
+        if (attempts == MAX_INCORRECT_ATTEMPTS) {
+            System.out.println("Maximum attempts reached");
             return;
         }
 
@@ -84,5 +96,7 @@ public class OnboardingService {
 
         System.out.println("\nAccount '" + username + "' created for CASA account '" + account.accountNumber() + "'");
         logger.info("Account '" + username + "' created for CASA account '" + account.accountNumber() + "'");
+
+        new LoginService().login(scanner);
     }
 }

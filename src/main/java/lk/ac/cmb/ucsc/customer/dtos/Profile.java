@@ -8,7 +8,7 @@ import lk.ac.cmb.ucsc.utils.logging.FileLogger;
 import java.util.logging.Logger;
 
 public class Profile {
-    private static final int MAX_INCORRECT_ATTEMPTS = 3;
+    public static final int MAX_INCORRECT_ATTEMPTS = 3;
     private static final Logger logger = FileLogger.getLogger();
     private static final PasswordEncryptionStrategy encryptionStrategy = new SHA256EncryptionStrategy();
 
