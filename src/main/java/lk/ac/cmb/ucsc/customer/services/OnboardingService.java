@@ -86,11 +86,14 @@ public class OnboardingService {
         final VerificationStrategy verificationStrategy = VerificationStrategy.values()[verifyOption - 1];
         verificationStrategy.verify(account);
 
-        final var username = new StringInput("Enter username", new UsernameValidator()).promptUser(scanner);
-        if (customerService.isProfileExists(username)) {
+        String username;
+        while (true) {
+            username = new StringInput("Enter username", new UsernameValidator()).promptUser(scanner);
+            if (!customerService.isProfileExists(username))
+                break;
             System.out.println("Username already exists");
-            return;
         }
+
         final var password = new PasswordInput("Enter password", new PasswordValidator()).promptUser(scanner);
         final var displayName = new StringInput("Enter display name").promptUser(scanner);
         customerService.saveProfile(new Profile(account, username, password, displayName));
