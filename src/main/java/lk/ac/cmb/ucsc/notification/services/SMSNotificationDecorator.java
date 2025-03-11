@@ -12,13 +12,13 @@ public class SMSNotificationDecorator extends NotificationDecorator {
         super(notificationService);
     }
 
-    public void sendNotification(CASAAccount account, String message) {
-        super.sendNotification(account, message);
-        if (account.mobileNumber() == null || account.mobileNumber().isEmpty()) {
-            logger.info("No mobile number set for '" + account.accountNumber() + "'");
+    public void sendOtp(CASAAccount account) {
+        super.sendOtp(account);
+        if (account.getMobileNumber() == null || account.getMobileNumber().isEmpty()) {
+            logger.info("No mobile number set for '" + account.getAccountNumber() + "'");
             return;
         }
-        logger.info("Sending SMS to '" + account.mobileNumber() + "' : '" + message + "'");
-        System.out.println("- Mobile: '" + account.mobileNumber().replaceAll("(?<=.{3}).(?=.{4})", "*") + "'");
+        logger.info("Sending SMS to '" + account.getMobileNumber() + "'. OTP: '" + account.getOtpData().otp() + "'");
+        System.out.println("- Mobile: '" + account.getMobileNumber().replaceAll("(?<=.{3}).(?=.{4})", "*") + "'");
     }
 }

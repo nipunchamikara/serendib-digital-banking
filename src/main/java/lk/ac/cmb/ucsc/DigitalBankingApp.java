@@ -2,9 +2,9 @@ package lk.ac.cmb.ucsc;
 
 import lk.ac.cmb.ucsc.customer.dtos.CASAAccount;
 import lk.ac.cmb.ucsc.customer.services.CustomerService;
-import lk.ac.cmb.ucsc.customer.services.CustomerServiceImpl;
 import lk.ac.cmb.ucsc.customer.services.LoginService;
 import lk.ac.cmb.ucsc.customer.services.OnboardingService;
+import lk.ac.cmb.ucsc.customer.services.impl.CustomerServiceImpl;
 import lk.ac.cmb.ucsc.utils.gen.RandomDataGenerator;
 import lk.ac.cmb.ucsc.utils.logging.FileLogger;
 import lk.ac.cmb.ucsc.utils.selection.MenuSelectionBuilder;
@@ -20,8 +20,8 @@ public class DigitalBankingApp {
         final var scanner = new Scanner(System.in);
         scanner.useDelimiter("[\r\n]+");
 
-        final var onboardingService = new OnboardingService();
-        final var loginService = new LoginService();
+        final var onboardingService = new OnboardingService(scanner);
+        final var loginService = new LoginService(scanner);
 
         do {
             final var option = new MenuSelectionBuilder()
@@ -34,10 +34,10 @@ public class DigitalBankingApp {
 
             switch (option) {
                 case 1:
-                    onboardingService.onboardCustomer(scanner);
+                    onboardingService.onboardCustomer();
                     break;
                 case 2:
-                    loginService.login(scanner);
+                    loginService.login();
                     break;
                 case 3:
                     System.out.println("Exit");

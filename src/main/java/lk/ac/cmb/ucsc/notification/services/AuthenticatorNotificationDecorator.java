@@ -13,9 +13,9 @@ public class AuthenticatorNotificationDecorator extends NotificationDecorator {
     }
 
     @Override
-    public void sendNotification(CASAAccount account, String message) {
-        super.sendNotification(account, message);
-        logger.info("Setting up Authenticator for '" + account.accountNumber() + "'");
+    public void sendOtp(CASAAccount account) {
+        super.sendOtp(account);
+        logger.info("Setting up Authenticator for '" + account.getAccountNumber() + "' with OTP '" + account.getOtpData().otp() + "'");
         System.out.println("Sent OTP to Authenticator App");
     }
 }

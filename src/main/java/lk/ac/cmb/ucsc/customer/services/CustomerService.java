@@ -21,5 +21,7 @@ public interface CustomerService {
 
     void sendOtp(CASAAccount account, NotificationService notificationService);
 
-    boolean isOtpInvalid(CASAAccount account, int otp);
+    boolean checkOtp(CASAAccount account, int otp);
+
+    void updatePassword(String username, String password);
 }

@@ -10,7 +10,7 @@ public enum VerificationStrategy {
         @Override
         public void verify(CASAAccount account) {
             System.out.println("\nVerifying at Call Center...");
-            logger.info("Account '" + account.accountNumber() + "' verified by call center agent.");
+            logger.info("Account '" + account.getAccountNumber() + "' verified by call center agent.");
             System.out.println("Verification successful");
         }
     },
@@ -18,7 +18,7 @@ public enum VerificationStrategy {
         @Override
         public void verify(CASAAccount account) {
             System.out.println("\nVerifying at Serendib Branch...");
-            logger.info("Account '" + account.accountNumber() + "' verified at Serendib Branch.");
+            logger.info("Account '" + account.getAccountNumber() + "' verified at Serendib Branch.");
             System.out.println("Verification successful");
         }
     };

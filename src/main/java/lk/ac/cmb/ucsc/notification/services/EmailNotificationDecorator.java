@@ -12,13 +12,13 @@ public class EmailNotificationDecorator extends NotificationDecorator {
         super(notificationService);
     }
 
-    public void sendNotification(CASAAccount account, String message) {
-        super.sendNotification(account, message);
-        if (account.email() == null || account.email().isEmpty()) {
-            logger.info("No email set for '" + account.accountNumber() + "'");
+    public void sendOtp(CASAAccount account) {
+        super.sendOtp(account);
+        if (account.getEmail() == null || account.getEmail().isEmpty()) {
+            logger.info("No email set for '" + account.getAccountNumber() + "'");
             return;
         }
-        logger.info("Sending Email to '" + account.email() + "' : '" + message + "'");
-        System.out.println("- Email: '" + account.email().replaceAll("(?<=.{2}).(?=.@)", "*") + "'");
+        logger.info("Sending Email to '" + account.getEmail() + "'. OTP: '" + account.getOtpData().otp() + "'");
+        System.out.println("- Email: '" + account.getEmail().replaceAll("(?<=.{2}).(?=.@)", "*") + "'");
     }
 }

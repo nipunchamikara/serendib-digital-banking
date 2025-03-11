@@ -1,6 +1,8 @@
 package lk.ac.cmb.ucsc.customer.services;
 
 import lk.ac.cmb.ucsc.customer.dtos.Profile;
+import lk.ac.cmb.ucsc.customer.exceptions.AccountLockedException;
+import lk.ac.cmb.ucsc.customer.services.impl.CustomerServiceImpl;
 import lk.ac.cmb.ucsc.customer.validator.*;
 import lk.ac.cmb.ucsc.notification.services.EmailNotificationDecorator;
 import lk.ac.cmb.ucsc.notification.services.NotificationService;
@@ -18,15 +20,16 @@ import java.util.logging.Logger;
 
 public class OnboardingService {
     private final static Logger logger = FileLogger.getLogger();
-    private final static int MAX_INCORRECT_ATTEMPTS = Profile.MAX_INCORRECT_ATTEMPTS;
     private final CustomerService customerService;
+    private final Scanner scanner;
 
-    public OnboardingService() {
+    public OnboardingService(Scanner scanner) {
         this.customerService = CustomerServiceImpl.INSTANCE;
+        this.scanner = scanner;
     }
 
-    public void onboardCustomer(Scanner scanner) {
-        final NotificationService notificationDecorator = new SMSNotificationDecorator(
+    public void onboardCustomer() {
+        final NotificationService notificationService = new SMSNotificationDecorator(
                 new EmailNotificationDecorator(new NotificationServiceImpl())
         );
 
@@ -59,20 +62,18 @@ public class OnboardingService {
             return;
         }
 
-        customerService.sendOtp(account, notificationDecorator);
-
-        int attempts = 0;
-        while (attempts < MAX_INCORRECT_ATTEMPTS) {
-            if (customerService.isOtpInvalid(account, new IntegerInput("Enter OTP").promptUser(scanner))) {
+        try {
+            customerService.sendOtp(account, notificationService);
+            while (!account.isLocked()) {
+                if (customerService.checkOtp(account, new IntegerInput("Enter OTP").promptUser(scanner)))
+                    break;
                 System.out.println("Invalid OTP");
-                attempts++;
-            } else {
-                break;
             }
-        }
-
-        if (attempts == MAX_INCORRECT_ATTEMPTS) {
-            System.out.println("Maximum attempts reached");
+            if (account.isLocked()) {
+                throw new AccountLockedException(account);
+            }
+        } catch (AccountLockedException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -94,9 +95,10 @@ public class OnboardingService {
         final var displayName = new StringInput("Enter display name").promptUser(scanner);
         customerService.saveProfile(new Profile(account, username, password, displayName));
 
-        System.out.println("\nAccount '" + username + "' created for CASA account '" + account.accountNumber() + "'");
-        logger.info("Account '" + username + "' created for CASA account '" + account.accountNumber() + "'");
+        System.out.println("\nAccount '" + username + "' created for CASA account '" + account.getAccountNumber() +
+                "'");
+        logger.info("Account '" + username + "' created for CASA account '" + account.getAccountNumber() + "'");
 
-        new LoginService().login(scanner);
+        new LoginService(scanner).login();
     }
 }

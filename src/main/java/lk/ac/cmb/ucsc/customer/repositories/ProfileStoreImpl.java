@@ -14,7 +14,7 @@ public enum ProfileStoreImpl implements ProfileStore {
 
     public void saveProfile(Profile profile) {
         profileStore.put(profile.getUsername().toLowerCase(), profile);
-        accountToProfile.put(profile.getAccount().accountNumber(), profile);
+        accountToProfile.put(profile.getAccount().getAccountNumber(), profile);
     }
 
     public Profile getProfile(String username) {
@@ -22,6 +22,6 @@ public enum ProfileStoreImpl implements ProfileStore {
     }
 
     public Profile getProfile(CASAAccount account) {
-        return accountToProfile.get(account.accountNumber());
+        return accountToProfile.get(account.getAccountNumber());
     }
 }

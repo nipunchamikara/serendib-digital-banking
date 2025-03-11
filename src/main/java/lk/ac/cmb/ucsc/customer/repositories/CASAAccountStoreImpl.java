@@ -11,7 +11,7 @@ public enum CASAAccountStoreImpl implements CASAAccountStore {
     private final Map<String, CASAAccount> accountStore = new HashMap<>();
 
     public void saveAccount(CASAAccount account) {
-        accountStore.put(account.accountNumber().toLowerCase(), account);
+        accountStore.put(account.getAccountNumber().toLowerCase(), account);
     }
 
     public CASAAccount getAccount(String username) {

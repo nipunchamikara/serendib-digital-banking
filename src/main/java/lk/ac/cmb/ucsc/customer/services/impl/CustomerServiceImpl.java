@@ -1,7 +1,8 @@
-package lk.ac.cmb.ucsc.customer.services;
+package lk.ac.cmb.ucsc.customer.services.impl;
 
 import lk.ac.cmb.ucsc.customer.dtos.CASAAccount;
 import lk.ac.cmb.ucsc.customer.dtos.Profile;
+import lk.ac.cmb.ucsc.customer.exceptions.AccountLockedException;
 import lk.ac.cmb.ucsc.customer.exceptions.InvalidPasswordException;
 import lk.ac.cmb.ucsc.customer.exceptions.InvalidUsernameException;
 import lk.ac.cmb.ucsc.customer.exceptions.ProfileLockedException;
@@ -9,9 +10,9 @@ import lk.ac.cmb.ucsc.customer.repositories.CASAAccountStore;
 import lk.ac.cmb.ucsc.customer.repositories.CASAAccountStoreImpl;
 import lk.ac.cmb.ucsc.customer.repositories.ProfileStore;
 import lk.ac.cmb.ucsc.customer.repositories.ProfileStoreImpl;
+import lk.ac.cmb.ucsc.customer.services.CustomerService;
+import lk.ac.cmb.ucsc.customer.services.OtpService;
 import lk.ac.cmb.ucsc.notification.services.NotificationService;
-import lk.ac.cmb.ucsc.otp.services.OtpService;
-import lk.ac.cmb.ucsc.otp.services.OtpServiceImpl;
 
 public enum CustomerServiceImpl implements CustomerService {
     INSTANCE;
@@ -32,8 +33,8 @@ public enum CustomerServiceImpl implements CustomerService {
         final var account = accountStore.getAccount(accountNumber);
 
         if (account == null) return null;
-        if (nic != null && !nic.equals(account.nic())) return null;
-        if (passportNumber != null && !passportNumber.equals(account.passportNumber())) return null;
+        if (nic != null && !nic.equals(account.getNic())) return null;
+        if (passportNumber != null && !passportNumber.equals(account.getPassportNumber())) return null;
 
         return account;
     }
@@ -79,10 +80,32 @@ public enum CustomerServiceImpl implements CustomerService {
 
     @Override
     public void sendOtp(CASAAccount account, NotificationService notificationService) {
-        otpService.generateOtp(account, notificationService);
+        if (account == null) throw new IllegalArgumentException("Account not found");
+        if (account.isLocked()) throw new AccountLockedException(account);
+        account.setOtpData(otpService.generateOtp());
+        saveAccount(account);
+        notificationService.sendOtp(account);
     }
 
-    public boolean isOtpInvalid(CASAAccount account, int otp) {
-        return !otpService.verifyOtp(account, otp);
+    @Override
+    public boolean checkOtp(CASAAccount account, int otp) {
+        if (account == null) throw new IllegalArgumentException("Account not found");
+        if (account.isLocked()) throw new AccountLockedException(account);
+        if (otpService.verifyOtp(account.getOtpData(), otp)) {
+            account.setOtpData(null);
+            saveAccount(account);
+            return true;
+        } else {
+            account.incrementFailedAttempts();
+            saveAccount(account);
+            return false;
+        }
+    }
+
+    @Override
+    public void updatePassword(String username, String password) {
+        final var profile = getProfile(username);
+        profile.setPassword(password);
+        saveProfile(profile);
     }
 }

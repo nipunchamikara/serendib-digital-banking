@@ -9,7 +9,7 @@ public abstract class NotificationDecorator implements NotificationService {
         this.notificationService = notificationService;
     }
 
-    public void sendNotification(CASAAccount account, String message) {
-        notificationService.sendNotification(account, message);
+    public void sendOtp(CASAAccount account) {
+        notificationService.sendOtp(account);
     }
 }

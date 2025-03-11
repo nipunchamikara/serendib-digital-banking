@@ -4,7 +4,7 @@ import lk.ac.cmb.ucsc.customer.dtos.CASAAccount;
 
 public class NotificationServiceImpl implements NotificationService {
     @Override
-    public void sendNotification(CASAAccount account, String message) {
+    public void sendOtp(CASAAccount account) {
         System.out.println("Sending OTP notification");
     }
 }

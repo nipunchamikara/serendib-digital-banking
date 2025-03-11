@@ -15,7 +15,7 @@ public class Profile {
     private final CASAAccount account;
     private final String username;
     private final String displayName;
-    private final String password;
+    private String password;
     private ProfileStatus status;
     private int incorrectAttempts;
 
@@ -24,7 +24,7 @@ public class Profile {
         this.username = username;
         this.password = encryptionStrategy.encrypt(password);
         this.displayName = displayName;
-        this.status = ProfileStatus.INITIATED;
+        this.status = ProfileStatus.ACTIVE;
         this.incorrectAttempts = 0;
     }
 
@@ -48,7 +48,7 @@ public class Profile {
         if (!encryptionStrategy.check(password, this.password)) {
             incorrectAttempts++;
             if (incorrectAttempts >= MAX_INCORRECT_ATTEMPTS) {
-                status = ProfileStatus.TEMPORARY_LOCKED;
+                status = ProfileStatus.LOCKED;
                 logger.info("Profile locked for '" + username + "'");
             }
             return false;
@@ -57,8 +57,12 @@ public class Profile {
         return true;
     }
 
+    public void setPassword(String password) {
+        this.password = encryptionStrategy.encrypt(password);
+    }
+
     public boolean isLocked() {
-        return getStatus() == ProfileStatus.TEMPORARY_LOCKED;
+        return getStatus() == ProfileStatus.LOCKED;
     }
 
 }
